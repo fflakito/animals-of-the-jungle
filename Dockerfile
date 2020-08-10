@@ -1,16 +1,20 @@
-FROM python:3.7-slim-stretch
+FROM continuumio/miniconda3:4.6.14
 
-COPY requirements.txt .
-ENV FLASK_APP=app.py
+RUN mkdir /app
 
-RUN apt-get update && apt-get install -y git python3-dev gcc \
-    && rm -rf /var/lib/apt/lists/* && pip install --upgrade pip && pip install --no-cache-dir --upgrade -r requirements.txt
+WORKDIR /app
 
-COPY app app/
+COPY app/conda_environment.yml /app
 
-RUN python app/server.py
+RUN conda env create -f /app/conda_environment.yml \
+    && conda clean --all --yes
 
-EXPOSE 5042
+COPY ./app /app
 
-# CMD ["python", "app/server.py", "serve"]
-CMD ["python", "-m", "flask", "run"]
+RUN chmod +x startup.sh
+
+RUN echo "conda activate fastai" >> ~/.bashrc
+
+RUN conda activate fastai && conda install flask
+
+CMD bash startup.sh
