@@ -1,9 +1,0 @@
-# starlette ou fastAPI
-# fastAi
-# uvicorn==0.11.8
-# , aiohttp, asyncio
-# io
-cmake
-dlib
-flask==1.1.2
-fastai==1.0.61
