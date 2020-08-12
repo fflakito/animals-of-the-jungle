@@ -1,5 +1,4 @@
 FROM ubuntu:20.04
-# FROM debian:jessie-slim
 
 LABEL maintainer="guillaume"
 
@@ -7,7 +6,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHON_VERSION=3.7
 
 RUN apt-get update \
-    # && apt-get install -y --allow-downgrades --no-install-recommends \
     && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
@@ -28,6 +26,8 @@ COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
 COPY app.py /app/
+COPY weights-v02.pkl /app/
+
 WORKDIR /app
 
 CMD [ "flask", "run", "--host=0.0.0.0", "--port=5000" ]
