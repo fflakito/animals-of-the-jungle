@@ -1,9 +1,9 @@
 FROM ubuntu:20.04
 
-LABEL maintainer="guillaume"
+LABEL maintainer="Guillaume Vrx"
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHON_VERSION=3.7
+ENV PYTHON_VERSION=3.8
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -19,15 +19,18 @@ RUN apt-get update \
     python3-nose python3-numpy python3-scipy \
     && rm -rf /var/lib/apt/lists/*
 
+# most important Python dependency
 RUN pip3 install torch==1.6.0+cpu torchvision==0.7.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
-RUN pip3 install fastai
 
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
-COPY app.py /app/
-COPY weights-v02.pkl /app/
+COPY app/ /app/
+WORKDIR /app/
 
-WORKDIR /app
+RUN chmod +x cmd_start.sh
 
-CMD [ "flask", "run", "--host=0.0.0.0", "--port=5000" ]
+EXPOSE 8000
+
+# CMD [ "flask run", "--host=0.0.0.0", "--port=8000" ] # for dev only: no Gunicorn server
+CMD ["./cmd_start.sh"]
